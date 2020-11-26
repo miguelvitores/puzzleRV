@@ -6,17 +6,17 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
+/*using System.Windows.Controls;
 using System.Windows.Shapes;
-using System.Windows.Media;
+using System.Windows.Media;*/
 using System.Windows.Forms;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace puzzleRV
 {
-
-    
 
     public partial class Form1 : Form
     {
@@ -27,7 +27,7 @@ namespace puzzleRV
         public Form1()
         {
 
-
+            /*
             // Create a StackPanel to contain the shape.
             StackPanel myStackPanel = new StackPanel();
 
@@ -52,17 +52,29 @@ namespace puzzleRV
             // Add the Ellipse to the StackPanel.
             myStackPanel.Children.Add(myEllipse);
 
-            this.Content = myStackPanel;
+            this.Content = myStackPanel;*/
 
 
 
             InitializeComponent();
+
+            this.pictureBox1.Image = this.Draw(this.pictureBox1.Width, this.pictureBox1.Height);
+        }
+
+        public Bitmap Draw(int width, int height)
+        {
+            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            var graphics = Graphics.FromImage(bitmap);
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.FillRectangle(new SolidBrush(Color.Tomato), 10, 10, 100, 100);
+
+            return bitmap;
         }
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //synth.Speak("Bienvenido al diseño de interfaces avanzadas. Inicializando la Aplicación");
+            synth.Speak("Bienvenido al diseño de interfaces avanzadas. Inicializando la Aplicación");
 
             Grammar grammar= CreateGrammarBuilderRGBSemantics2(null);
             _recognizer.SetInputToDefaultAudioDevice();
@@ -74,7 +86,7 @@ namespace puzzleRV
             _recognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(_recognizer_SpeechRecognized);
             //reconocimiento asíncrono y múltiples veces
             _recognizer.RecognizeAsync(RecognizeMode.Multiple);
-            //synth.Speak("Aplicación preparada para reconocer su voz");
+            synth.Speak("Aplicación preparada para reconocer su voz");
          }
 
      

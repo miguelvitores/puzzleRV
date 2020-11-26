@@ -8,3 +8,4 @@ E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.csproj.GenerateResource.cache
 E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.csproj.CoreCompileInputs.cache
 E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.exe
 E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.pdb
+E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.Form1.resources
