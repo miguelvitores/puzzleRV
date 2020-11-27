@@ -23,58 +23,71 @@ namespace puzzleRV
      private System.Speech.Recognition.SpeechRecognitionEngine _recognizer = 
         new SpeechRecognitionEngine();
         private SpeechSynthesizer synth = new SpeechSynthesizer();
-        
+        private Label label1 = new Label();
+        private int [,] mapa = new int[,] { 
+            { 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 }, 
+            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+            { 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 2, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1 }, 
+            { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1 } 
+        };
+
         public Form1()
         {
-
-            /*
-            // Create a StackPanel to contain the shape.
-            StackPanel myStackPanel = new StackPanel();
-
-            // Create a red Ellipse.
-            Ellipse myEllipse = new Ellipse();
-
-            // Create a SolidColorBrush with a red color to fill the
-            // Ellipse with.
-            SolidColorBrush mySolidColorBrush = new SolidColorBrush();
-
-            // Describes the brush's color using RGB values.
-            // Each value has a range of 0-255.
-            mySolidColorBrush.Color = Color.FromArgb(255, 255, 255, 0);
-            myEllipse.Fill = mySolidColorBrush;
-            myEllipse.StrokeThickness = 2;
-            myEllipse.Stroke = Brushes.Black;
-
-            // Set the width and height of the Ellipse.
-            myEllipse.Width = 200;
-            myEllipse.Height = 100;
-
-            // Add the Ellipse to the StackPanel.
-            myStackPanel.Children.Add(myEllipse);
-
-            this.Content = myStackPanel;*/
-
-
-
             InitializeComponent();
-
-            this.pictureBox1.Image = this.Draw(this.pictureBox1.Width, this.pictureBox1.Height);
         }
 
-        public Bitmap Draw(int width, int height)
+        protected override void OnPaint(PaintEventArgs e)
         {
-            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            var graphics = Graphics.FromImage(bitmap);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.FillRectangle(new SolidBrush(Color.Tomato), 10, 10, 100, 100);
+            Size size = this.Size;
+            int width = size.Width;
+            int height = size.Height;
+            Color fondo =       System.Drawing.Color.FromArgb(255, 107, 241, 120);
+            Color obstaculos =  System.Drawing.Color.FromArgb(255, 68, 99, 63);
+            Color jugador =     System.Drawing.Color.FromArgb(255, 255, 127, 17);
+            Color meta =        System.Drawing.Color.FromArgb(255, 108, 207, 246);
+            Color c = new Color();
+            System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(c);
+            int rows = this.mapa.GetLength(0);
+            int cols = this.mapa.GetLength(1);
 
-            return bitmap;
+            for (int i = 0; i < rows; i++ )
+            {
+                int y1 = height * i / rows;
+                int y2 = height * (i + 1) / rows;
+                for (int j = 0; j < cols; j++)
+                {
+                    int v = this.mapa[i, j];
+                    int x1 = width * j / cols;
+                    int x2 = width * (j + 1) / cols;
+                    if (v == 0)
+                    {
+                        myBrush.Color = fondo;
+                    }
+                    else if (v == 1)
+                    {
+                        myBrush.Color = obstaculos;
+                    }
+                    else if (v == 2)
+                    {
+                        myBrush.Color = jugador;
+                    }
+                    else
+                    {
+                        myBrush.Color = meta;
+                    }
+                    e.Graphics.FillRectangle(myBrush, new Rectangle(x1, y1, x2, y2));
+                }
+            }
+
+            myBrush.Dispose();
         }
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            synth.Speak("Bienvenido al diseño de interfaces avanzadas. Inicializando la Aplicación");
+            //synth.Speak("Bienvenido al diseño de interfaces avanzadas. Inicializando la Aplicación");
 
             Grammar grammar= CreateGrammarBuilderRGBSemantics2(null);
             _recognizer.SetInputToDefaultAudioDevice();
@@ -86,7 +99,7 @@ namespace puzzleRV
             _recognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(_recognizer_SpeechRecognized);
             //reconocimiento asíncrono y múltiples veces
             _recognizer.RecognizeAsync(RecognizeMode.Multiple);
-            synth.Speak("Aplicación preparada para reconocer su voz");
+            //synth.Speak("Aplicación preparada para reconocer su voz");
          }
 
      
