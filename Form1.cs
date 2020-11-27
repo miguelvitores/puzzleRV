@@ -42,6 +42,7 @@ namespace puzzleRV
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
             //synth.Speak("Bienvenido al diseño de interfaces avanzadas. Inicializando la Aplicación");
 
             Grammar grammar = CreateGrammarBuilderRGBSemantics2(null);
@@ -143,6 +144,9 @@ namespace puzzleRV
             {
                 Direccion d = (Direccion)semantics["direc"].Value;
                 this.mover_jugador(d);
+                this.label1.Location = new Point(this.Size.Width * this.posjug[1] / this.mapa.GetLength(1), 
+                    this.Size.Height * this.posjug[0] / this.mapa.GetLength(0));
+                this.label1.Size = new Size(this.Size.Width / this.mapa.GetLength(1), this.Size.Height / this.mapa.GetLength(0));
                 Update();
                 //synth.Speak(rawText);
             }
@@ -152,47 +156,72 @@ namespace puzzleRV
         {
             int j_row = this.posjug[0];
             int j_col = this.posjug[1];
+            bool es_meta = false;
             if (d.Equals(Direccion.Izquierda))
             {
-                while (j_col > 0 && this.mapa[j_row, j_col - 1] == 0)
+                while (j_col > 0 && this.mapa[j_row, j_col - 1] != 1)
                 {
+                    es_meta = this.mapa[j_row, j_col - 1] == 3;
                     this.mapa[j_row, j_col - 1] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_col--;
                     this.cambio_mapa = true;
+                    if (es_meta) {
+                        this.label1.Text = "Has llegado a la meta";
+                        this.label1.Visible = true;
+                        break;
+                    }
                     this.Invalidate();
                 }
             }
             else if (d.Equals(Direccion.Arriba))
             {
-                while (j_row > 0 && this.mapa[j_row - 1, j_col] == 0)
+                while (j_row > 0 && this.mapa[j_row - 1, j_col] != 1)
                 {
+                    es_meta = this.mapa[j_row - 1, j_col] == 3;
                     this.mapa[j_row - 1, j_col] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_row--;
                     this.cambio_mapa = true;
+                    if (es_meta) { 
+                        this.label1.Text = "Has llegado a la meta";
+                        this.label1.Visible = true;
+                        break;
+                    }
                     this.Invalidate();
                 }
             }
             else if (d.Equals(Direccion.Derecha))
             {
-                while (j_col < (this.mapa.GetLength(1) - 1) && this.mapa[j_row, j_col + 1] == 0)
+                while (j_col < (this.mapa.GetLength(1) - 1) && this.mapa[j_row, j_col + 1] != 1)
                 {
+                    es_meta = this.mapa[j_row, j_col + 1] == 3;
                     this.mapa[j_row, j_col + 1] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_col++;
                     this.cambio_mapa = true;
+                    if (es_meta) { 
+                        this.label1.Text = "Has llegado a la meta";
+                        this.label1.Visible = true;
+                        break;
+                    }
                     this.Invalidate();
                 }
             }
             else if (d.Equals(Direccion.Abajo))
             {
-                while (j_row < (this.mapa.GetLength(0) - 1) && this.mapa[j_row + 1, j_col] == 0)
+                while (j_row < (this.mapa.GetLength(0) - 1) && this.mapa[j_row + 1, j_col] != 1)
                 {
+                    es_meta = this.mapa[j_row + 1, j_col] == 3;
                     this.mapa[j_row + 1, j_col] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_row++;
                     this.cambio_mapa = true;
+                    if (es_meta) { 
+                        this.label1.Text = "Has llegado a la meta";
+                        this.label1.Visible = true;
+                        break;
+                    }
                     this.Invalidate();
                 }
             }
