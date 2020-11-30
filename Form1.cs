@@ -136,6 +136,8 @@ namespace puzzleRV
             Console.WriteLine(rawText);
             RecognitionResult result = e.Result;
 
+            this.label1.Text = rawText;
+
             if (!semantics.ContainsKey("direc"))
             {
                 this.label1.Text = "No info provided.";
