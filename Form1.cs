@@ -12,6 +12,7 @@ using System.Windows.Media;*/
 using System.Windows.Forms;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using System.Threading;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
@@ -24,16 +25,24 @@ namespace puzzleRV
         new SpeechRecognitionEngine();
         private SpeechSynthesizer synth = new SpeechSynthesizer();
         private Label label1 = new Label();
-        private int [,] mapa = new int[,] { 
-            { 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 }, 
-            { 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
-            { 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 2, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1 }, 
-            { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1 } 
+        private int[,] mapa = new int[,] {
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            { 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 2, 0, 1 },
+            { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+            { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1 },
+            { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1 },
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
         };
         private bool cambio_mapa = true;
+        private String frase = "Escuchando tus indicaciones...";
         private int[] posjug = new int[2];
+        private Direccion d;
+        private Thread t;
+        private Single single = 32F;
+        private int stringY = 20;
+        private int refresco = 500;
 
         public Form1()
         {
@@ -43,7 +52,8 @@ namespace puzzleRV
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            //synth.Speak("Bienvenido al diseño de interfaces avanzadas. Inicializando la Aplicación");
+            //synth.Speak("Bienvenido. Está a punto de resolver un increíble puzzle, tienes que hacer que el cuadrado naranja se acople al cuadrado azul." +
+            //    " Espera mientras cargamos el mapa");
 
             Grammar grammar = CreateGrammarBuilderRGBSemantics2(null);
             _recognizer.SetInputToDefaultAudioDevice();
@@ -55,7 +65,99 @@ namespace puzzleRV
             _recognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(_recognizer_SpeechRecognized);
             //reconocimiento asíncrono y múltiples veces
             _recognizer.RecognizeAsync(RecognizeMode.Multiple);
-            //synth.Speak("Aplicación preparada para reconocer su voz");
+            NuevaPartida();
+            //synth.Speak("Aplicación preparada para reconocer su voz, indica hacia donde quieres moverte.");
+        }
+
+        private void NuevaPartida()
+        {
+            single = 32F;
+            stringY = 20;
+            refresco = 500;
+            mapa = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 2, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+            this.cambio_mapa = true;
+        }
+
+        private void NuevaPartidaGenerada(TipoPartida tp)
+        {
+            int N = 16;
+            double pObs = 0.2;
+            int numMetas = 1;
+
+            if (tp.Equals(TipoPartida.Normal))
+            {
+                N = 32;
+                numMetas = 2;
+                single = 16F;
+                stringY = 15;
+                refresco = 250;
+            }
+            else if (tp.Equals(TipoPartida.Dificil))
+            {
+                N = 64;
+                numMetas = 4;
+                single = 8F;
+                stringY = 7;
+                refresco = 100;
+            }
+
+            int M = N / 2;
+            mapa = new int[M + 2, N + 2];
+            int rows = M + 2;
+            int cols = N + 2;
+            Random r = new Random();
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (i == 0 || i == rows - 1 || j == 0 || j == cols - 1)
+                    {
+                        mapa[i, j] = 1;
+                    }
+                    else if (r.NextDouble() > pObs)
+                    {
+                        mapa[i, j] = 0;
+                    }
+                    else
+                    {
+                        mapa[i, j] = 1;
+                    }
+                }
+            }
+
+            int iJug = r.Next(1, rows - 1);
+            int jJug = r.Next(1, cols - 1);
+            while (mapa[iJug, jJug] != 0)
+            {
+                iJug = r.Next(1, rows - 1);
+                jJug = r.Next(1, cols - 1);
+            }
+            mapa[iJug, jJug] = 2;
+
+            for (int n = numMetas; n > 0; n--)
+            {
+                int iMeta = r.Next(1, rows - 1);
+                int jMeta = r.Next(1, cols - 1);
+                while (mapa[iMeta, jMeta] != 0)
+                {
+                    iMeta = r.Next(1, rows - 1);
+                    jMeta = r.Next(1, cols - 1);
+                }
+                mapa[iMeta, jMeta] = 3;
+            }
+
+
+            this.cambio_mapa = true;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -70,6 +172,7 @@ namespace puzzleRV
                 Color obstaculos = System.Drawing.Color.FromArgb(255, 68, 99, 63);
                 Color jugador = System.Drawing.Color.FromArgb(255, 255, 127, 17);
                 Color meta = System.Drawing.Color.FromArgb(255, 108, 207, 246);
+                Color blanco = System.Drawing.Color.FromArgb(255, 255, 255, 255);
                 Color c = new Color();
                 System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(c);
                 int rows = this.mapa.GetLength(0);
@@ -104,7 +207,11 @@ namespace puzzleRV
                         e.Graphics.FillRectangle(myBrush, new Rectangle(x1, y1, x2, y2));
                     }
                 }
-
+                myBrush.Color = blanco;
+                Font font = new System.Drawing.Font("Microsoft Sans Serif", single, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Center;
+                e.Graphics.DrawString(frase, font, myBrush, width / 2, stringY, stringFormat);
                 myBrush.Dispose();
                 cambio_mapa = false;
             }
@@ -112,49 +219,39 @@ namespace puzzleRV
 
         void _recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            ////obtenemos un diccionario con los elementos semánticos
-            //SemanticValue semantics = e.Result.Semantics;
-          
-            //string rawText = e.Result.Text;
-            //RecognitionResult result = e.Result;
-
-            //if (!semantics.ContainsKey("rgb"))
-            //{
-            //    this.label1.Text = "No info provided.";
-            //}
-            //else
-            //{
-            //    this.label1.Text = rawText;
-            //    this.BackColor = Color.FromArgb((int)semantics["rgb"].Value);
-            //    Update();
-            //    //synth.Speak(rawText);
-            //}
-
             SemanticValue semantics = e.Result.Semantics;
 
             string rawText = e.Result.Text;
             Console.WriteLine(rawText);
             RecognitionResult result = e.Result;
 
-            this.label1.Text = rawText;
 
-            if (!semantics.ContainsKey("direc"))
+            this.frase = rawText;
+
+            if (semantics.ContainsKey("direc"))
             {
-                this.label1.Text = "No info provided.";
-            }
-            else
-            {
-                Direccion d = (Direccion)semantics["direc"].Value;
-                this.mover_jugador(d);
-                this.label1.Location = new Point(this.Size.Width * this.posjug[1] / this.mapa.GetLength(1), 
-                    this.Size.Height * this.posjug[0] / this.mapa.GetLength(0));
-                this.label1.Size = new Size(this.Size.Width / this.mapa.GetLength(1), this.Size.Height / this.mapa.GetLength(0));
+                this.d = (Direccion)semantics["direc"].Value;
+                this.t = new Thread(new ThreadStart(this.mover_jugador));
+                t.Start();
                 Update();
-                //synth.Speak(rawText);
+            }
+            else if (semantics.ContainsKey("nueva_partida"))
+            {
+                if (semantics.ContainsKey("tipo_partida"))
+                {
+                    TipoPartida tp = (TipoPartida)semantics["tipo_partida"].Value;
+                    NuevaPartidaGenerada(tp);
+                }
+                else
+                {
+                    NuevaPartida();
+                }
+                this.Invalidate();
+                Update();
             }
         }
 
-        private void mover_jugador(Direccion d)
+        private void mover_jugador()
         {
             int j_row = this.posjug[0];
             int j_col = this.posjug[1];
@@ -167,13 +264,10 @@ namespace puzzleRV
                     this.mapa[j_row, j_col - 1] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_col--;
-                    this.cambio_mapa = true;
-                    if (es_meta) {
-                        this.label1.Text = "Has llegado a la meta";
-                        this.label1.Visible = true;
+                    if (ActualizarMapa(es_meta))
+                    {
                         break;
                     }
-                    this.Invalidate();
                 }
             }
             else if (d.Equals(Direccion.Arriba))
@@ -184,13 +278,11 @@ namespace puzzleRV
                     this.mapa[j_row - 1, j_col] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_row--;
-                    this.cambio_mapa = true;
-                    if (es_meta) { 
-                        this.label1.Text = "Has llegado a la meta";
-                        this.label1.Visible = true;
+                    if (ActualizarMapa(es_meta)) 
+                    {
                         break;
                     }
-                    this.Invalidate();
+
                 }
             }
             else if (d.Equals(Direccion.Derecha))
@@ -201,13 +293,10 @@ namespace puzzleRV
                     this.mapa[j_row, j_col + 1] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_col++;
-                    this.cambio_mapa = true;
-                    if (es_meta) { 
-                        this.label1.Text = "Has llegado a la meta";
-                        this.label1.Visible = true;
+                    if (ActualizarMapa(es_meta))
+                    {
                         break;
                     }
-                    this.Invalidate();
                 }
             }
             else if (d.Equals(Direccion.Abajo))
@@ -218,42 +307,31 @@ namespace puzzleRV
                     this.mapa[j_row + 1, j_col] = 2;
                     this.mapa[j_row, j_col] = 0;
                     j_row++;
-                    this.cambio_mapa = true;
-                    if (es_meta) { 
-                        this.label1.Text = "Has llegado a la meta";
-                        this.label1.Visible = true;
+                    if (ActualizarMapa(es_meta))
+                    {
                         break;
                     }
-                    this.Invalidate();
                 }
             }
+        }
+
+        private bool ActualizarMapa(bool es_meta)
+        {
+            this.cambio_mapa = true;
+            if (es_meta)
+            {
+                this.frase = "Has llegado a la meta";
+                this.Invalidate();
+                return true;
+            }
+            this.Invalidate();
+            Thread.Sleep(refresco);
+            return false;
         }
         
       
         private Grammar CreateGrammarBuilderRGBSemantics2(params int[] info)
         {
-            //synth.Speak("Creando ahora la gramática");
-            //Choices colorChoice = new Choices();
-
-
-            //SemanticResultValue choiceResultValue =
-            //        new SemanticResultValue("Rojo", Color.FromName("Red").ToArgb());
-            //GrammarBuilder resultValueBuilder = new GrammarBuilder(choiceResultValue);
-            //colorChoice.Add(resultValueBuilder);
-
-            //choiceResultValue =
-            //       new SemanticResultValue("Azul", Color.FromName("Blue").ToArgb());
-            //resultValueBuilder = new GrammarBuilder(choiceResultValue);
-            //colorChoice.Add(resultValueBuilder);
-
-            //choiceResultValue =
-            //       new SemanticResultValue("Verde", Color.FromName("Green").ToArgb());
-            //resultValueBuilder = new GrammarBuilder(choiceResultValue);
-            //colorChoice.Add(resultValueBuilder);
-
-            //SemanticResultKey choiceResultKey = new SemanticResultKey("rgb", colorChoice);
-            //GrammarBuilder colores = new GrammarBuilder(choiceResultKey);
-
             Choices direcChoice = new Choices();
 
             SemanticResultValue choiceResultValue =
@@ -281,26 +359,58 @@ namespace puzzleRV
 
 
             GrammarBuilder mover = "Mover";
-            GrammarBuilder mover2 = "Mover a";
-            GrammarBuilder mover3 = "Mover a la";
+            GrammarBuilder mover1 = "Muevete";
+            GrammarBuilder mover2 = "Movete";
             GrammarBuilder desplazar ="Desplazar";
-            GrammarBuilder desplazar2 = "Desplazar a";
-            GrammarBuilder desplazar3 = "Desplazar a la";
+            GrammarBuilder desplazar1 = "Desplazate";
+            GrammarBuilder desplazar3 = "Desplazando";
 
-            Choices verbos = new Choices(mover, mover2, mover3, desplazar, desplazar2, desplazar3);
-            GrammarBuilder frase = new GrammarBuilder(verbos);
-            frase.Append(direcciones);
-            //frase.Append(fondo);
-            //frase.Append(colores);
+            GrammarBuilder conector1 = "A";
+            GrammarBuilder conector2 = "A la";
+            GrammarBuilder conector3 = "Hacia";
+            GrammarBuilder conector4 = "Hacia la";
+
+            Choices verbos = new Choices(mover, mover1, mover2, desplazar, desplazar1, desplazar3);
+            Choices conectores = new Choices(conector1, conector2, conector3, conector4);
+            GrammarBuilder desplazamiento = new GrammarBuilder();
+            desplazamiento.Append(verbos, 0, 1);
+            desplazamiento.Append(conectores, 0, 1);
+            desplazamiento.Append(direcciones);
+
+
+            Choices tipoPartidaChoice = new Choices();
+
+            choiceResultValue =
+                    new SemanticResultValue("Fácil", 0);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            tipoPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("Normal", 1);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            tipoPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("Difícil", 2);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            tipoPartidaChoice.Add(resultValueBuilder);
+
+            SemanticResultKey tipoPartidaKey = new SemanticResultKey("tipo_partida", tipoPartidaChoice);
+            GrammarBuilder tipoPartida = new GrammarBuilder(tipoPartidaKey);
+
+            GrammarBuilder nuevaP = "Nueva partida";
+
+            SemanticResultKey nuevaPartidaKey = new SemanticResultKey("nueva_partida", nuevaP);
+            GrammarBuilder nuevaPartida = new GrammarBuilder(nuevaPartidaKey);
+            nuevaPartida.Append(tipoPartida, 0, 1);
+
+            Choices posiblesAcciones = new Choices(desplazamiento, nuevaPartida);
+            GrammarBuilder frase = new GrammarBuilder(posiblesAcciones);
+
             Grammar grammar = new Grammar(frase);            
-            grammar.Name = "Desplazar jugador";
-
-            //Grammar grammar = new Grammar("so.xml.txt");
+            grammar.Name = "Puzzle";
  
             return grammar;
-
-
-       
         }
     }
 
@@ -310,5 +420,12 @@ namespace puzzleRV
         Arriba,
         Derecha,
         Abajo
+    }
+
+    public enum TipoPartida
+    {
+        Facil,
+        Normal,
+        Dificil
     }
 }

@@ -8,3 +8,13 @@ E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.csproj.CoreCompileInputs.cach
 E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.exe
 E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.pdb
 E:\mitts\SemestreB\DIM\puzzleRV\obj\Debug\puzzleRV.Form1.resources
+E:\mitts\SemestreA2\DIM\puzzleRV\bin\Debug\puzzleRV.exe.config
+E:\mitts\SemestreA2\DIM\puzzleRV\bin\Debug\puzzleRV.exe
+E:\mitts\SemestreA2\DIM\puzzleRV\bin\Debug\puzzleRV.pdb
+E:\mitts\SemestreA2\DIM\puzzleRV\obj\Debug\puzzleRV.csprojAssemblyReference.cache
+E:\mitts\SemestreA2\DIM\puzzleRV\obj\Debug\puzzleRV.Form1.resources
+E:\mitts\SemestreA2\DIM\puzzleRV\obj\Debug\puzzleRV.Properties.Resources.resources
+E:\mitts\SemestreA2\DIM\puzzleRV\obj\Debug\puzzleRV.csproj.GenerateResource.cache
+E:\mitts\SemestreA2\DIM\puzzleRV\obj\Debug\puzzleRV.csproj.CoreCompileInputs.cache
+E:\mitts\SemestreA2\DIM\puzzleRV\obj\Debug\puzzleRV.exe
+E:\mitts\SemestreA2\DIM\puzzleRV\obj\Debug\puzzleRV.pdb
