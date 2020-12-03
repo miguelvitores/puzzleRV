@@ -165,7 +165,7 @@ namespace puzzleRV
             base.OnPaint(e);
             if (this.cambio_mapa)
             {
-                Size size = this.Size;
+                Size size = this.ClientSize;
                 int width = size.Width;
                 int height = size.Height;
                 Color fondo = System.Drawing.Color.FromArgb(255, 107, 241, 120);
@@ -177,16 +177,16 @@ namespace puzzleRV
                 System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(c);
                 int rows = this.mapa.GetLength(0);
                 int cols = this.mapa.GetLength(1);
+                int tileWidth = (width / cols) + 1;
+                int tileHeight = (height / rows) + 1;
 
                 for (int i = 0; i < rows; i++)
                 {
-                    int y1 = height * i / rows;
-                    int y2 = height * (i + 1) / rows;
+                    int y1 = tileHeight * i;
                     for (int j = 0; j < cols; j++)
                     {
                         int v = this.mapa[i, j];
-                        int x1 = width * j / cols;
-                        int x2 = width * (j + 1) / cols;
+                        int x1 = tileWidth * j;
                         if (v == 0)
                         {
                             myBrush.Color = fondo;
@@ -204,7 +204,7 @@ namespace puzzleRV
                         {
                             myBrush.Color = meta;
                         }
-                        e.Graphics.FillRectangle(myBrush, new Rectangle(x1, y1, x2, y2));
+                        e.Graphics.FillRectangle(myBrush, new Rectangle(x1, y1, tileWidth, tileHeight));
                     }
                 }
                 myBrush.Color = blanco;
@@ -398,9 +398,13 @@ namespace puzzleRV
             SemanticResultKey tipoPartidaKey = new SemanticResultKey("tipo_partida", tipoPartidaChoice);
             GrammarBuilder tipoPartida = new GrammarBuilder(tipoPartidaKey);
 
+            Choices nuevaPChoice = new Choices();
             GrammarBuilder nuevaP = "Nueva partida";
+            nuevaPChoice.Add(nuevaP);
+            GrammarBuilder nuevoM = "Nuevo mapa";
+            nuevaPChoice.Add(nuevoM);
 
-            SemanticResultKey nuevaPartidaKey = new SemanticResultKey("nueva_partida", nuevaP);
+            SemanticResultKey nuevaPartidaKey = new SemanticResultKey("nueva_partida", nuevaPChoice);
             GrammarBuilder nuevaPartida = new GrammarBuilder(nuevaPartidaKey);
             nuevaPartida.Append(tipoPartida, 0, 1);
 
