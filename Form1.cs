@@ -52,8 +52,8 @@ namespace puzzleRV
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            //synth.Speak("Bienvenido. Está a punto de resolver un increíble puzzle, tienes que hacer que el cuadrado naranja se acople al cuadrado azul." +
-            //    " Espera mientras cargamos el mapa");
+            synth.Speak("Bienvenido. Está a punto de resolver un increíble puzzle, tienes que hacer que el cuadrado naranja se acople al cuadrado azul." +
+                " Espera mientras cargamos el mapa");
 
             Grammar grammar = CreateGrammarBuilderRGBSemantics2(null);
             _recognizer.SetInputToDefaultAudioDevice();
@@ -66,7 +66,7 @@ namespace puzzleRV
             //reconocimiento asíncrono y múltiples veces
             _recognizer.RecognizeAsync(RecognizeMode.Multiple);
             NuevaPartida();
-            //synth.Speak("Aplicación preparada para reconocer su voz, indica hacia donde quieres moverte.");
+            synth.Speak("Aplicación preparada para reconocer su voz, indica hacia donde quieres moverte.");
         }
 
         private void NuevaPartida()
