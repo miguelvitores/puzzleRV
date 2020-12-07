@@ -24,7 +24,7 @@ namespace puzzleRV
      private System.Speech.Recognition.SpeechRecognitionEngine _recognizer = 
         new SpeechRecognitionEngine();
         private SpeechSynthesizer synth = new SpeechSynthesizer();
-        private Label label1 = new Label();
+        private int[][,] listaMapas = new int[8][,];
         private int[,] mapa = new int[,] {
             { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
             { 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1 },
@@ -46,7 +46,99 @@ namespace puzzleRV
 
         public Form1()
         {
+            InicializarMapas();
             InitializeComponent();
+        }
+
+        private void InicializarMapas()
+        {
+            listaMapas[0] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 2, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+            listaMapas[1] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 2, 1, 0, 0, 1, 0, 0, 1, 0, 1 },
+                { 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+                { 1, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 1 },
+                { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+            listaMapas[2] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 1, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 3, 0, 1, 0, 0, 0, 0, 1, 1, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            };
+            listaMapas[3] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 1, 2, 0, 0, 1, 0, 0, 1 },
+                { 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 1, 0, 0, 3, 1, 0, 0, 0, 1, 1 },
+                { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            };
+            listaMapas[4] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
+                { 1, 2, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1 },
+                { 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1 },
+                { 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 3, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            };
+            listaMapas[5] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
+                { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1 },
+                { 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            };
+            listaMapas[6] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+                { 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1 },
+                { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 2, 1 },
+                { 1, 0, 1, 1, 3, 1, 0, 0, 0, 1, 0, 1 },
+                { 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+                { 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            };
+            listaMapas[7] = new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 1, 1, 0, 3, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 },
+                { 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1 },
+                { 1, 2, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            };
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -69,21 +161,12 @@ namespace puzzleRV
             synth.Speak("Aplicación preparada para reconocer su voz, indica hacia donde quieres moverte.");
         }
 
-        private void NuevaPartida()
+        private void NuevaPartida(int num=0)
         {
             single = 32F;
             stringY = 20;
             refresco = 500;
-            mapa = new int[,] {
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                { 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1 },
-                { 1, 0, 0, 3, 0, 0, 0, 1, 1, 0, 0, 2, 0, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1 },
-                { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1 },
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
+            mapa = (int[,])listaMapas[num].Clone();
             this.cambio_mapa = true;
         }
 
@@ -242,6 +325,11 @@ namespace puzzleRV
                     TipoPartida tp = (TipoPartida)semantics["tipo_partida"].Value;
                     NuevaPartidaGenerada(tp);
                 }
+                else if (semantics.ContainsKey("num_partida"))
+                {
+                    int num = (int)semantics["num_partida"].Value;
+                    NuevaPartida(num);
+                }
                 else
                 {
                     NuevaPartida();
@@ -398,6 +486,53 @@ namespace puzzleRV
             SemanticResultKey tipoPartidaKey = new SemanticResultKey("tipo_partida", tipoPartidaChoice);
             GrammarBuilder tipoPartida = new GrammarBuilder(tipoPartidaKey);
 
+
+            Choices numPartidaChoice = new Choices();
+
+            choiceResultValue =
+                    new SemanticResultValue("número cero", 0);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("número uno", 1);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("número dos", 2);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("número tres", 3);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("número cuatro", 4);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("número cinco", 5);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("número seis", 6);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+            choiceResultValue =
+                    new SemanticResultValue("número siete", 7);
+            resultValueBuilder = new GrammarBuilder(choiceResultValue);
+            numPartidaChoice.Add(resultValueBuilder);
+
+
+            SemanticResultKey numPartidaKey = new SemanticResultKey("num_partida", numPartidaChoice);
+            GrammarBuilder numPartida = new GrammarBuilder(numPartidaKey);
+
             Choices nuevaPChoice = new Choices();
             GrammarBuilder nuevaP = "Nueva partida";
             nuevaPChoice.Add(nuevaP);
@@ -406,7 +541,10 @@ namespace puzzleRV
 
             SemanticResultKey nuevaPartidaKey = new SemanticResultKey("nueva_partida", nuevaPChoice);
             GrammarBuilder nuevaPartida = new GrammarBuilder(nuevaPartidaKey);
-            nuevaPartida.Append(tipoPartida, 0, 1);
+            Choices opcionesPartidaChoices = new Choices();
+            opcionesPartidaChoices.Add(tipoPartida);
+            opcionesPartidaChoices.Add(numPartida);
+            nuevaPartida.Append(opcionesPartidaChoices, 0, 1);
 
             Choices posiblesAcciones = new Choices(desplazamiento, nuevaPartida);
             GrammarBuilder frase = new GrammarBuilder(posiblesAcciones);
